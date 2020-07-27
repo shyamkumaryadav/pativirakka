@@ -11,6 +11,9 @@ django-heroku = "*"
 psycopg2 = "*"
 whitenoise = "*"
 dj-database-url = "*"
+django-cleanup = "*"
+gunicorn = "*"
+pillow = "*"
 
 [dev-packages]
 black = "*"
@@ -20,6 +23,3 @@ python_version = "3.8"
 
 [pipenv]
 allow_prereleases = true
-
-[packages.django-cleanup]
-extras = [ "dropbox",]

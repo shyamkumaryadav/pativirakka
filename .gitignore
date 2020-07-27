@@ -6,4 +6,9 @@ build/
 *.log
 db.sqlite3
 db.sqlite3-journal
-.env
+.venv/
+.infofile
+Procfile.lock
+pativirakka/__pycache__/
+pativirakka/migrations
+!pativirakka/migrations/__init__.py

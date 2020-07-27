@@ -1,1 +1,1 @@
-web: gunicorn pativirakka.wsgi
+web: gunicorn pativirakka.wsgi —-log-file -
