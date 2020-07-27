@@ -11,4 +11,5 @@ db.sqlite3-journal
 Procfile.lock
 pativirakka/__pycache__/
 pativirakka/migrations
+Procfile.lock
 !pativirakka/migrations/__init__.py

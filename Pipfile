@@ -23,3 +23,6 @@ python_version = "3.8"
 
 [pipenv]
 allow_prereleases = true
+
+[packages.django-storages]
+extras = [ "dropbox",]
