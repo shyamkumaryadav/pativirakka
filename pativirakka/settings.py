@@ -28,8 +28,7 @@ INSTALLED_APPS = [
 ]
 
 
-
-#Logging
+# Logging
 
 LOGGING = {
     'version': 1,
@@ -44,7 +43,6 @@ LOGGING = {
         'level': 'WARNING',
     },
 }
-
 
 
 MIDDLEWARE = [
@@ -87,8 +85,8 @@ DATABASES = {
     },
 }
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
+DATABASES['default'] = dj_database_url.config(
+    conn_max_age=600, ssl_require=True)
 
 
 # Password validation
@@ -98,9 +96,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", },
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },
 ]
 
 
@@ -111,7 +109,7 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "Asia/Kolkata"
 
-LANGUAGE_COOKIE_NAME = "pativirakka_LANG"
+LANGUAGE_COOKIE_NAME = "pativirakka_LANGUAGE"
 
 USE_I18N = True
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Experience, Skills, Person, Education, Social_links, Add_more
+from .models import Experience, Skill, Person, Education, Social_link, Add_more
 
 admin.site.site_header = "Pativirakka Admin"
 admin.site.site_title = "Pativirakka Site Admin"
@@ -11,12 +11,15 @@ User = get_user_model()
 class TabEducation(admin.StackedInline):
     model = Education
     extra = 1
-    classes = ('collapse',)
+    min = 1
+    # classes = ('collapse',)
+
 
 class TabSkills(admin.StackedInline):
-    model = Skills
+    model = Skill
     extra = 1
-    classes = ('collapse',)
+    num = 1
+    # classes = ('collapse',)
 
 
 class TabExperience(admin.StackedInline):
@@ -24,29 +27,32 @@ class TabExperience(admin.StackedInline):
     extra = 0
     classes = ('collapse',)
 
+
 class TabSocial_links(admin.StackedInline):
-    model = Social_links
+    model = Social_link
     extra = 0
     classes = ('collapse',)
+
 
 class TabAdd_more(admin.StackedInline):
     model = Add_more
     extra = 0
     classes = ('collapse',)
 
-@admin.register(Experience, Skills, Education, Social_links, Add_more)
-class AllAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(Experience, Skills, Education, Social_links, Add_more)
+# class AllAdmin(admin.ModelAdmin):
+#     pass
 
 
 # admin.site.unregister(User)
 
 @admin.register(Person)
 class PersonAdmins(admin.ModelAdmin):
-    inlines = [TabEducation, TabSkills, TabExperience, TabSocial_links, TabAdd_more]
-
+    inlines = [TabEducation, TabSkills,
+               TabExperience, TabSocial_links, TabAdd_more]
+    readonly_fields = ('image_tag',)
     fieldsets = (
         (None, {
-            'fields' : ('user', 'profile')
+            'fields': ('image_tag', 'user', 'profile')
         }),
     )
