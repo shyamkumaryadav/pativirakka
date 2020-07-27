@@ -1,5 +1,5 @@
 *.py linguist-language=Python
 *.html linguist-language=Django-HTML
-*.css linguist-language=CSS
+#*.css linguist-language=CSS
 *.js linguist-language=JavaScript
 *.txt linguist-language=Text-File
