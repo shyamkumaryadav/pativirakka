@@ -83,7 +83,7 @@ WSGI_APPLICATION = "pativirakka.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.psycopg2',
     },
 }
 
@@ -140,6 +140,5 @@ MEDIA_URL = "/media/"
 # https://django-storages.readthedocs.io/en/latest/backends/dropbox.html
 
 DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN')
-DROPBOX_ROOT_PATH = '/pativirakka'
 DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 django_heroku.settings(locals())
