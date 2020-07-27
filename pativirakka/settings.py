@@ -11,6 +11,24 @@ DEBUG = False
 ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com", "localhost", "127.0.0.1"]
 
 
+#Logging
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -22,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "ckeditor",
     "pativirakka",
+    "django_cleanup",
 ]
 
 MIDDLEWARE = [
@@ -32,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = "pativirakka.urls"
@@ -58,12 +78,8 @@ WSGI_APPLICATION = "pativirakka.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
-}
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
 
 
 # Password validation
@@ -104,12 +120,17 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # media files (Image, Video)
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
+# Django Storage Dropbox (User Videos and Images)
+# https://django-storages.readthedocs.io/en/latest/backends/dropbox.html
+
+DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN')
+DROPBOX_ROOT_PATH = '/pativirakka'
+DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+django_heroku.settings(locals())
