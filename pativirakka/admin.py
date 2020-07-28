@@ -12,14 +12,12 @@ class TabEducation(admin.StackedInline):
     model = Education
     extra = 1
     min = 1
-    # classes = ('collapse',)
 
 
 class TabSkills(admin.StackedInline):
     model = Skill
     extra = 1
     num = 1
-    # classes = ('collapse',)
 
 
 class TabExperience(admin.StackedInline):
@@ -38,13 +36,6 @@ class TabAdd_more(admin.StackedInline):
     model = Add_more
     extra = 0
     classes = ('collapse',)
-
-# @admin.register(Experience, Skills, Education, Social_links, Add_more)
-# class AllAdmin(admin.ModelAdmin):
-#     pass
-
-
-# admin.site.unregister(User)
 
 @admin.register(Person)
 class PersonAdmins(admin.ModelAdmin):

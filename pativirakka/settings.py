@@ -7,9 +7,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com", "localhost", "127.0.0.1"]
+# ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com", "localhost", "127.0.0.1"] # For Producation
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -20,30 +21,15 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "whitenoise.runserver_nostatic",
+    # "whitenoise.runserver_nostatic", # For Producation
     "django.contrib.staticfiles",
     "ckeditor",
     "pativirakka",
     "django_cleanup",
+    "crispy_forms",
 ]
 
-
-# Logging
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
-    },
-}
-
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -53,7 +39,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', # For Producation
 ]
 
 ROOT_URLCONF = "pativirakka.urls"
@@ -81,12 +67,13 @@ WSGI_APPLICATION = "pativirakka.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.psycopg2',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
 }
 
-DATABASES['default'] = dj_database_url.config(
-    conn_max_age=600, ssl_require=True)
+# DATABASES['default'] = dj_database_url.config(
+#     conn_max_age=600, ssl_require=True) # For Producation
 
 
 # Password validation
@@ -127,16 +114,19 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # For Producation
 
 
 # media files (Image, Video)
 MEDIA_URL = "/media/"
+MEDIA__ROOT = os.path.join(BASE_DIR, 'media')  # For local
 
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 
 # Django Storage Dropbox (User Videos and Images)
 # https://django-storages.readthedocs.io/en/latest/backends/dropbox.html
 
-DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN')
-DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
-django_heroku.settings(locals())
+# DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN') # For Producation
+# DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage' # For Producation
+# django_heroku.settings(locals()) # For Producation

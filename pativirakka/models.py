@@ -46,7 +46,7 @@ class Person(models.Model):
 
     def image_tag(self):
         from django.utils.html import mark_safe, escape
-        return mark_safe('<img src="%s" width="200px" download/>' % escape(self.profile.url))
+        return mark_safe('<img src="%s" width="200px" />' % escape(self.profile.url))
     image_tag.short_description = 'Image'
     image_tag.allow_tags = True
 
