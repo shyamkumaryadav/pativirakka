@@ -9,8 +9,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True
 
-# ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com", "localhost", "127.0.0.1"] # For Producation
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com",
+                 "localhost", "127.0.0.1"]  # For Producation
+# ALLOWED_HOSTS = ['*'] # for local
 
 
 # Application definition
@@ -21,7 +22,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    # "whitenoise.runserver_nostatic", # For Producation
+    "whitenoise.runserver_nostatic",  # For Producation
     "django.contrib.staticfiles",
     "ckeditor",
     "pativirakka",
@@ -39,7 +40,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # 'whitenoise.middleware.WhiteNoiseMiddleware', # For Producation
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For Producation
 ]
 
 ROOT_URLCONF = "pativirakka.urls"
@@ -72,8 +73,8 @@ DATABASES = {
     },
 }
 
-# DATABASES['default'] = dj_database_url.config(
-#     conn_max_age=600, ssl_require=True) # For Producation
+DATABASES['default'] = dj_database_url.config(
+    conn_max_age=600, ssl_require=True)  # For Producation
 
 
 # Password validation
@@ -114,12 +115,13 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' # For Producation
+# For Producation
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # media files (Image, Video)
 MEDIA_URL = "/media/"
-MEDIA__ROOT = os.path.join(BASE_DIR, 'media')  # For local
+# MEDIA__ROOT = os.path.join(BASE_DIR, 'media')  # For local
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
@@ -127,6 +129,6 @@ LOGOUT_REDIRECT_URL = 'home'
 # Django Storage Dropbox (User Videos and Images)
 # https://django-storages.readthedocs.io/en/latest/backends/dropbox.html
 
-# DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN') # For Producation
-# DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage' # For Producation
-# django_heroku.settings(locals()) # For Producation
+DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN')  # For Producation
+DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'  # For Producation
+django_heroku.settings(locals())  # For Producation
