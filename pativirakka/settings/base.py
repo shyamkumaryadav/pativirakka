@@ -1,18 +1,14 @@
 import os
-import dj_database_url
-import django_heroku
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 
-# DEBUG = True # for local
-DEBUG = False  # for Producation
+DEBUG = True
 
-ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com",
-                 "localhost", "127.0.0.1"]  # For Producation
-# ALLOWED_HOSTS = ['*'] # for local
+
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -23,7 +19,6 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "whitenoise.runserver_nostatic",  # For Producation
     "django.contrib.staticfiles",
     "ckeditor",
     "pativirakka",
@@ -41,7 +36,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For Producation
 ]
 
 ROOT_URLCONF = "pativirakka.urls"
@@ -73,9 +67,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
 }
-
-DATABASES['default'] = dj_database_url.config(
-    conn_max_age=600, ssl_require=True)  # For Producation
 
 
 # Password validation
@@ -116,20 +107,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-# For Producation
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # media files (Image, Video)
 MEDIA_URL = "/media/"
-# MEDIA__ROOT = os.path.join(BASE_DIR, 'media')  # For local
+
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-
-# Django Storage Dropbox (User Videos and Images)
-# https://django-storages.readthedocs.io/en/latest/backends/dropbox.html
-
-DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN')  # For Producation
-DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'  # For Producation
-django_heroku.settings(locals())  # For Producation
