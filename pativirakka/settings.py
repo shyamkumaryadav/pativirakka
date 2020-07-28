@@ -7,7 +7,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 
-DEBUG = True
+# DEBUG = True # for local
+DEBUG = False  # for Producation
 
 ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com",
                  "localhost", "127.0.0.1"]  # For Producation
