@@ -10,7 +10,7 @@ urlpatterns = [
     path('login/', logIn, name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('signup/', UserCreate.as_view(), name='signup'),
-    path('pativirakka', Pativirakka, name="pativirakka"),
+    path('pativirakka/', Pativirakka, name="pativirakka"),
     path('admin/', admin.site.urls),
 ]
 
