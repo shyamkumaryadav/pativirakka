@@ -55,6 +55,12 @@ class UserCreate(CreateView):
             raise Http404
         return super().get(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        print(request.POST)
+        if request.user:
+            return super().post(request, *args, **kwargs)
+        raise Http404
+
 
 @csrf_exempt
 def Pativirakka(request, *args, **kwargs):

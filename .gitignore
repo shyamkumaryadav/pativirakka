@@ -11,6 +11,7 @@ Pipfile
 .env
 .infofile
 Procfile.lock
+media/
 pativirakka/__pycache__/
 pativirakka/migrations
 pativirakka/migrations/__pycache__/

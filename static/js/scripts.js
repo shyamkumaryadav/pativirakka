@@ -43,9 +43,8 @@
             data: form.serialize(),
             success: (data) => {
                 form[0].reset();
-                console.log(typeof (data));
                 if (data.error) {
-                    document.getElementById('errorusername').innerHTML = data.error;
+                    $('#errorusername').text(data.error);
                 }
                 else if (data === 'ok') {
                     location.reload();
@@ -58,6 +57,7 @@
     $(".js-scroll-trigger").click(function () {
         $(".navbar-collapse").collapse("hide");
     });
+
 
     // Activate scrollspy to add active class to navbar items on scroll
     $("body").scrollspy({
