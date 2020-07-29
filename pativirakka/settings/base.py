@@ -1,8 +1,8 @@
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = "09j#soyd6se9jwf_!m!y*4jhks_l1_(r-8se5bvuw#)$%i8l6@"
 
 
 DEBUG = True
@@ -110,7 +110,7 @@ STATICFILES_DIRS = [
 
 
 # media files (Image, Video)
-MEDIA_URL = "/media/"
+MEDIA_URL = "media/"
 
 
 LOGIN_REDIRECT_URL = 'home'

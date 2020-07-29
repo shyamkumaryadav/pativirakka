@@ -1,12 +1,14 @@
+import os
 from .base import *
 
+
+print("*"*10, "DEVELOPMENT", "*"*20)
 
 
 
 ALLOWED_HOSTS = ["*"]
 
 
-MEDIA__ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-print("*"*10, "DEVELOPMENT", "*"*20)
 

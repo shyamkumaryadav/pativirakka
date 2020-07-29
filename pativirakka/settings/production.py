@@ -2,6 +2,7 @@ from .base import *
 import dj_database_url
 import django_heroku
 
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = False
 

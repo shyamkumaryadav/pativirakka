@@ -33,7 +33,7 @@ SOCIAL_TAGS = [
 
 
 def upload_to(instance, filename):
-    return f"{secrets.token_hex()}-{instance.user.first_name}-{instance.user.last_name}-{secrets.token_hex()}.{filename.split('.')[-1]}"
+    return f"{instance.user.first_name}-{instance.user.last_name}-{secrets.token_hex()}.{filename.split('.')[-1]}"
 
 
 class Person(models.Model):
