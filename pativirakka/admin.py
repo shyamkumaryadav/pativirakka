@@ -1,11 +1,16 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Experience, Skill, Person, Education, SocialLink, AddMore, AwardCertification
+from .models import Experience, Skill, Person, Education, SocialLink, AddMore, AwardCertification, PativirakkaFrom
 
 admin.site.site_header = "Pativirakka Admin"
 admin.site.site_title = "Pativirakka Site Admin"
 admin.site.index_title = "Site Pativirakka"
 User = get_user_model()
+
+
+@admin.register(PativirakkaFrom)
+class AdminPativirakkaFrom(admin.ModelAdmin):
+    list_display = ('__str__', '_is_limit')
 
 
 class TabEducation(admin.StackedInline):
@@ -31,10 +36,12 @@ class TabSocial_links(admin.StackedInline):
     extra = 0
     classes = ('collapse',)
 
+
 class TabAwardCertification(admin.StackedInline):
     model = AwardCertification
     extra = 0
     classes = ('collapse',)
+
 
 class TabAdd_more(admin.StackedInline):
     model = AddMore

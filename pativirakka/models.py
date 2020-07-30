@@ -138,3 +138,19 @@ class AwardCertification(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PativirakkaFrom(models.Model):
+    contect = models.CharField(max_length=220)
+    limit = models.IntegerField(default=1)
+    limit_number = models.IntegerField(default=10)
+
+    def __str__(self):
+        return self.contect
+
+    def _is_limit(self):
+        return self.limit <= self.limit_number
+
+    _is_limit.boolean = True
+    _is_limit.short_description = "Limit Not Done"
+    is_limit = property(_is_limit)

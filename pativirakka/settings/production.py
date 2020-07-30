@@ -8,11 +8,12 @@ DEBUG = False
 
 ALLOWED_HOSTS = [".ngrok.io", ".herokuapps.com"]
 
-INSTALLED_APPS += ["whitenoise.runserver_nostatic",]
+INSTALLED_APPS += ["whitenoise.runserver_nostatic", ]
 
-MIDDLEWARE += ['whitenoise.middleware.WhiteNoiseMiddleware',]
+MIDDLEWARE += ['whitenoise.middleware.WhiteNoiseMiddleware', ]
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+DATABASES['default'] = dj_database_url.config(
+    conn_max_age=600, ssl_require=True)
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

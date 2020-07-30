@@ -10,6 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
 from django.http.response import Http404
 from twilio.rest import Client
+from .models import PativirakkaFrom
+from django.db.models import F
 from twilio.twiml.messaging_response import (
     MessagingResponse,
     Body,
@@ -69,50 +71,64 @@ def Pativirakka(request, *args, **kwargs):
     if request.POST:
         msg = request.POST.get("Body")
         phone = request.POST.get("From")
+        pati, created = PativirakkaFrom.get_or_create(contect=phone)
+        if created:
+            pati.save()
         response = MessagingResponse()
         message = Message()
-        try:
-            if msg:
+        message.body(f"""
+This bot is for *downloading Instagram public profile videos and images.* To download video 🎬 or Image 📸 just *share the public link of POST* with me ~I will send back your Image 📸 or Video 🎬.~
 
-                instagram = Instagram_Image_Video_only_Public(re.search("(?P<url>https?://[^\s]+)", msg).group())
-                message.body('How are you ?')
-                message.media(url=instagram)
-        except:
-            message.body('Error !!! 404**********************')
-            message.media(url="https://instagram.fbom18-1.fna.fbcdn.net/v/t51.2885-15/e35/102689701_2489623424683578_1441808812537307718_n.jpg?_nc_ht=instagram.fbom18-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=0TUQhtb0t4YAX9209cL&oh=f9bac8aa13b79d8113b265c588956da8&oe=5F4C0590")
-        message.body(f"""This bot is for downloading Instagram public profile videos and images. To download video 🎬 or Image 📸 just share the link of POST with me I will send back your Image 📸 or Video 🎬. If You are Not getting Any think You should provide a privet post link or wrong link 🔔.
+If You are Not getting Any think You should provide a privet link or wrong link 🔔.
 
             *🧔 Thank You !!!*
 
-Find me on 🔥:
-```Facebook & Instagram : @ishyamkumaryadav
-Twitter: @shyamkumatyada
+Find me on 🔥:\n
+```Facebook & Instagram : @ishyamkumaryadav\n
+Twitter: @shyamkumatyada\n
 Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```""")
+        if pati.is_limit and len(msg) >= 15:
+            urls = re.findall("(?P<url>https?://[^\s]+)", msg)
+            for url in urls:
+                instagram = _Instagram_Image_Video_only_Public(url=url)
+                if instagram:
+                    message.media(url=instagram)
+            PativirakkaFrom.objects.filter(
+                contect=phone).update(limit=F('limit') + 1)
+        else:
+            message.body('\n\n\nHow are you 🌄')
         response.append(message)
         return HttpResponse(str(response))
     raise Http404
 
 
-def Instagram_Image_Video_only_Public(url="https://www.instagram.com/p/CB_GbiCsMQt"):
+def _Instagram_Image_Video_only_Public(url="https://www.instagram.com/p/CB_GbiCsMQt"):
     try:
         x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
         if x:
             request_image = requests.get(url)
             src = request_image.content.decode('utf-8')
-            check_type = re.search(r'<meta name="medium" content=[\'"]?([^\'" >]+)', src)
+            check_type = re.search(
+                r'<meta name="medium" content=[\'"]?([^\'" >]+)', src)
             check_type_f = check_type.group()
             final = re.sub('<meta name="medium" content="', '', check_type_f)
 
             if final == "image":
-                extract_image_link = re.search(r'meta property="og:image" content=[\'"]?([^\'" >]+)', src)
+                extract_image_link = re.search(
+                    r'meta property="og:image" content=[\'"]?([^\'" >]+)', src)
                 image_link = extract_image_link.group()
-                image_url = re.sub('meta property="og:image" content="', '', image_link)
+                image_url = re.sub(
+                    'meta property="og:image" content="', '', image_link)
                 return image_url
 
             if final == "video":
-                extract_video_link = re.search(r'meta property="og:video" content=[\'"]?([^\'" >]+)', src)
+                extract_video_link = re.search(
+                    r'meta property="og:video" content=[\'"]?([^\'" >]+)', src)
                 video_link = extract_video_link.group()
-                video_url = re.sub('meta property="og:video" content="', '', video_link)
+                video_url = re.sub(
+                    'meta property="og:video" content="', '', video_link)
                 return video_url
+        else:
+            return False
     except:
-        return None
+        return False
