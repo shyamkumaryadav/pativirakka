@@ -76,16 +76,15 @@ def Pativirakka(request, *args, **kwargs):
             if find_link:
                 link = find_link.group()
                 instagram = Instagram_Image_Video_only_Public(url=link)
-                message.media(url=instagram)
+                message.body('url: \n', instagram)
         message.body(f"""This bot is for downloading Instagram public profile videos and images. To download video 🎬 or Image 📸 just share the link of POST with me I will send back your Image 📸 or Video 🎬. If You are Not getting Any think You should provide a privet post link or wrong link 🔔.
 
             *🧔 Thank You !!!*
 
-            Find me on 🔥:
-            ```Facebook & Instagram : @ishyamkumaryadav
-            Twitter: @shyamkumatyada
-            Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```
-            """)
+Find me on 🔥:
+```Facebook & Instagram : @ishyamkumaryadav
+Twitter: @shyamkumatyada
+Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```""")
         response.append(message)
         return HttpResponse(str(response))
     raise Http404
