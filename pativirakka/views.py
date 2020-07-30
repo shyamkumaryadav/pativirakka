@@ -87,10 +87,10 @@ Find me on 🔥:\n
 ```Facebook & Instagram : @ishyamkumaryadav\n
 Twitter: @shyamkumatyada\n
 Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```""")
-        if pati.is_limit and len(msg) >= 15:
+        if pati.is_limit:
             urls = re.findall("(?P<url>https?://[^\s]+)", msg)
             for url in urls:
-                instagram = _Instagram_Image_Video_only_Public(url=url)
+                instagram = _Instagram_Image_Video_only_Public(url)
                 if instagram:
                     message.media(url=instagram)
             PativirakkaFrom.objects.filter(
