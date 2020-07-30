@@ -93,9 +93,9 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```""")
                 instagram = _Instagram_Image_Video_only_Public(url)
                 if instagram:
                     message.media(url=instagram)
+                    PativirakkaFrom.objects.filter(
+                        contect=phone).update(limit=F('limit') + 1)
                     break
-            PativirakkaFrom.objects.filter(
-                contect=phone).update(limit=F('limit') + 1)
         else:
             message.body('\n\n\nHow are you 🌄')
         response.append(message)
