@@ -21,6 +21,38 @@ from twilio.twiml.messaging_response import (
 )
 
 
+def _Instagram_Image_Video_only_Public(url):
+    try:
+        x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
+        if x:
+            request_image = requests.get(url)
+            src = request_image.content.decode('utf-8')
+            check_type = re.search(
+                r'<meta name="medium" content=[\'"]?([^\'" >]+)', src)
+            check_type_f = check_type.group()
+            final = re.sub('<meta name="medium" content="', '', check_type_f)
+
+            if final == "image":
+                extract_image_link = re.search(
+                    r'meta property="og:image" content=[\'"]?([^\'" >]+)', src)
+                image_link = extract_image_link.group()
+                image_url = re.sub(
+                    'meta property="og:image" content="', '', image_link)
+                return image_url
+
+            elif final == "video":
+                extract_video_link = re.search(
+                    r'meta property="og:video" content=[\'"]?([^\'" >]+)', src)
+                video_link = extract_video_link.group()
+                video_url = re.sub(
+                    'meta property="og:video" content="', '', video_link)
+                return video_url
+        else:
+            return False
+    except:
+        pass
+
+
 def home(request):
     context = {}
     if not request.user.is_authenticated:
@@ -106,35 +138,3 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n""")
         response.append(message)
         return HttpResponse(str(response))
     raise Http404
-
-
-def _Instagram_Image_Video_only_Public(url):
-    try:
-        x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
-        if x:
-            request_image = requests.get(url)
-            src = request_image.content.decode('utf-8')
-            check_type = re.search(
-                r'<meta name="medium" content=[\'"]?([^\'" >]+)', src)
-            check_type_f = check_type.group()
-            final = re.sub('<meta name="medium" content="', '', check_type_f)
-
-            if final == "image":
-                extract_image_link = re.search(
-                    r'meta property="og:image" content=[\'"]?([^\'" >]+)', src)
-                image_link = extract_image_link.group()
-                image_url = re.sub(
-                    'meta property="og:image" content="', '', image_link)
-                return image_url
-
-            elif final == "video":
-                extract_video_link = re.search(
-                    r'meta property="og:video" content=[\'"]?([^\'" >]+)', src)
-                video_link = extract_video_link.group()
-                video_url = re.sub(
-                    'meta property="og:video" content="', '', video_link)
-                return video_url
-        else:
-            return False
-    except:
-        pass
