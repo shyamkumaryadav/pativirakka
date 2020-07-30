@@ -71,12 +71,15 @@ def Pativirakka(request, *args, **kwargs):
         phone = request.POST.get("From")
         response = MessagingResponse()
         message = Message()
-        if len(msg) > 5:
-            find_link = re.search("(?P<url>https?://[^\s]+)", msg)
-            if find_link:
-                link = find_link.group()
-                instagram = Instagram_Image_Video_only_Public(url=link)
-                message.body('url: \n', instagram)
+        try:
+            if len(msg) > 5:
+                find_link = re.search("(?P<url>https?://[^\s]+)", msg)
+                if find_link:
+                    link = find_link.group()
+                    instagram = Instagram_Image_Video_only_Public(url=link)
+                    message.body('url: \n', instagram)
+        except:
+            message.body('Error !!!')
         message.body(f"""This bot is for downloading Instagram public profile videos and images. To download video 🎬 or Image 📸 just share the link of POST with me I will send back your Image 📸 or Video 🎬. If You are Not getting Any think You should provide a privet post link or wrong link 🔔.
 
             *🧔 Thank You !!!*
