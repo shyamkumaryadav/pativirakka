@@ -21,7 +21,7 @@ from twilio.twiml.messaging_response import (
 )
 
 
-def _Instagram_Image_Video_only_Public(url):
+def Instagram_Image_Video_only_Public(url):
     try:
         x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
         if x:
@@ -53,8 +53,8 @@ def _Instagram_Image_Video_only_Public(url):
         else:
             print('id asle not find')
             return False
-    except:
-        print("except")
+    except Exception as e:
+        print(e)
         pass
 
 
@@ -129,7 +129,7 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n""")
             print(urls)
             for url in urls:
                 print(url)
-                instagram = _Instagram_Image_Video_only_Public(url)
+                instagram = Instagram_Image_Video_only_Public(url)
                 print(instagram)
                 if instagram:
                     message.media(url=instagram)
