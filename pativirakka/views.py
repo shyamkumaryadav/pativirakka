@@ -73,11 +73,10 @@ def Pativirakka(request, *args, **kwargs):
         message = Message()
         try:
             if msg:
-                find_link = msg.search("(?P<url>https?://[^\s]+)", msg)
-                if find_link:
-                    link = find_link.group()
-                    instagram = Instagram_Image_Video_only_Public(url=link)
-                    message.body('url: \n', instagram)
+
+                instagram = Instagram_Image_Video_only_Public(re.search("(?P<url>https?://[^\s]+)", msg).group())
+                message.body('How are you ?')
+                message.media(url=instagram)
         except:
             message.body('Error !!! 404**********************')
             message.media(url="https://instagram.fbom18-1.fna.fbcdn.net/v/t51.2885-15/e35/102689701_2489623424683578_1441808812537307718_n.jpg?_nc_ht=instagram.fbom18-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=0TUQhtb0t4YAX9209cL&oh=f9bac8aa13b79d8113b265c588956da8&oe=5F4C0590")
