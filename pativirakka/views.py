@@ -31,6 +31,7 @@ def _Instagram_Image_Video_only_Public(url):
                 r'<meta name="medium" content=[\'"]?([^\'" >]+)', src)
             check_type_f = check_type.group()
             final = re.sub('<meta name="medium" content="', '', check_type_f)
+            print(final)
 
             if final == "image":
                 extract_image_link = re.search(
@@ -38,6 +39,7 @@ def _Instagram_Image_Video_only_Public(url):
                 image_link = extract_image_link.group()
                 image_url = re.sub(
                     'meta property="og:image" content="', '', image_link)
+                print(image_url)
                 return image_url
 
             elif final == "video":
@@ -46,10 +48,13 @@ def _Instagram_Image_Video_only_Public(url):
                 video_link = extract_video_link.group()
                 video_url = re.sub(
                     'meta property="og:video" content="', '', video_link)
+                print(video_url)
                 return video_url
         else:
+            print('id asle not find')
             return False
     except:
+        print("except")
         pass
 
 
