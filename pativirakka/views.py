@@ -86,18 +86,23 @@ If You are Not getting Any think You should provide a privet link or wrong link 
 Find me on 🔥:\n
 ```Facebook & Instagram : @ishyamkumaryadav\n
 Twitter: @shyamkumatyada\n
-Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```""")
+Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n""")
         if pati.is_limit:
             urls = re.findall("(?P<url>https?://[^\s]+)", msg)
+            print(urls)
             for url in urls:
+                print(url)
                 instagram = _Instagram_Image_Video_only_Public(url)
+                print(instagram)
                 if instagram:
                     message.media(url=instagram)
+                    print('Media * '*6)
                     PativirakkaFrom.objects.filter(
                         contect=phone).update(limit=F('limit') + 1)
                     break
         else:
             message.body('\n\n\nHow are you 🌄')
+            print('Not url * ' * 6)
         response.append(message)
         return HttpResponse(str(response))
     raise Http404
