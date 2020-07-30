@@ -108,7 +108,7 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n""")
     raise Http404
 
 
-def _Instagram_Image_Video_only_Public(url="https://www.instagram.com/p/CB_GbiCsMQt"):
+def _Instagram_Image_Video_only_Public(url):
     try:
         x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
         if x:
@@ -127,7 +127,7 @@ def _Instagram_Image_Video_only_Public(url="https://www.instagram.com/p/CB_GbiCs
                     'meta property="og:image" content="', '', image_link)
                 return image_url
 
-            if final == "video":
+            elif final == "video":
                 extract_video_link = re.search(
                     r'meta property="og:video" content=[\'"]?([^\'" >]+)', src)
                 video_link = extract_video_link.group()
@@ -137,4 +137,4 @@ def _Instagram_Image_Video_only_Public(url="https://www.instagram.com/p/CB_GbiCs
         else:
             return False
     except:
-        return False
+        pass
