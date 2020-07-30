@@ -71,7 +71,7 @@ def Pativirakka(request, *args, **kwargs):
     if request.POST:
         msg = request.POST.get("Body")
         phone = request.POST.get("From")
-        pati, created = PativirakkaFrom.get_or_create(contect=phone)
+        pati, created = PativirakkaFrom.objects.get_or_create(contect=phone)
         if created:
             pati.save()
         response = MessagingResponse()
