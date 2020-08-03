@@ -3,16 +3,19 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
+from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 from .views import home, Pativirakka, logIn, UserCreate, manage_authors, logOut
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', home, name='home'),
+    path('test/', manage_authors),
     path('login/', logIn, name='login'),
     path('logout/', logOut, name='logout'),
-    path('signup/', UserCreate.as_view(), name='signup'),
     path('pativirakka/', Pativirakka, name="pativirakka"),
-    path('data/', manage_authors, name="data"),
-    path('admin/', admin.site.urls),
+    path('favicon.ico',
+         RedirectView.as_view(url=staticfiles_storage.url('assets/img/favicon.ico')))
 ]
 
 if settings.DEBUG:

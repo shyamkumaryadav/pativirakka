@@ -56,6 +56,6 @@ class PersonAdmins(admin.ModelAdmin):
     readonly_fields = ('image_tag',)
     fieldsets = (
         (None, {
-            'fields': ('image_tag', 'user', 'profile')
+            'fields': ('image_tag', 'user', 'address', 'about', 'profile')
         }),
     )

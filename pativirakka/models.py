@@ -48,9 +48,10 @@ def SizeOk(value):
 
 
 class Person(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.TextField()
-    about = models.TextField()
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, unique=True,)
+    address = models.TextField(max_length=150)
+    about = RichTextField()
     profile = models.FileField(upload_to=upload_to, default='default.png', blank=True, null=True, help_text=f'Size <b>{filesizeformat(SIZE_OK)}</b> or less.[500 x 500]',
                                validators=[validators.FileExtensionValidator(allowed_extensions=validators.get_available_image_extensions(), message="'%(extension)s' not valid Profile Image."), SizeOk])
 
@@ -59,7 +60,7 @@ class Person(models.Model):
 
     def image_tag(self):
         from django.utils.html import mark_safe, escape
-        return mark_safe('<img src="%s" width="200px" />' % escape(self.profile.url))
+        return mark_safe('<img src="{}" width="200px" />'.format(escape(self.profile.url)))
     image_tag.short_description = 'Image'
     image_tag.allow_tags = True
 

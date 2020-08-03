@@ -12,7 +12,7 @@ from django.core.exceptions import PermissionDenied
 from django.http.response import Http404
 from django.contrib import messages
 from twilio.rest import Client
-from .models import PativirakkaFrom, Person
+from .models import PativirakkaFrom, Person, Experience
 from django.db.models import F
 from twilio.twiml.messaging_response import (
     MessagingResponse,
@@ -24,17 +24,15 @@ from twilio.twiml.messaging_response import (
 
 
 def manage_authors(request):
-    AuthorFormSet = formset_factory(Person, extra=3)
+    AuthorFormSet = modelformset_factory(
+        Experience, exclude=('user',), extra=1)
+    formset = AuthorFormSet(request.POST or None,
+                            queryset=Experience.objects.filter(user=Person.objects.get(user=request.user)))
     if request.method == "POST":
-        formset = AuthorFormSet(
-            request.POST, request.FILES
-        )
         if formset.is_valid():
             user = formset.save()
             return HttpResponse("is Valid")
-    else:
-        formset = AuthorFormSet()
-    return render(request, 'form.html', {'form': formset})
+    return render(request, 'form.html', {'forms': formset})
 
 
 def Instagram_Image_Video_only_Public(url):
