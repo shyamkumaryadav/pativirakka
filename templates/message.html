@@ -1,0 +1,20 @@
+{% if messages %}
+{% for message in messages %}
+<script>
+    switch("{{ message.tags }}"){
+        case "info":
+            toastr.info("{{ message }}" , {newestOnTop:true, progressBar:true,positionClass:'toast-bottom-center',});
+            break;
+        case "success":
+            toastr.success("{{ message }}" , {newestOnTop:true, progressBar:true,positionClass:'toast-bottom-center',});
+            break;
+        case "warning":
+            toastr.warning("{{ message }}" , {newestOnTop:true, progressBar:true,positionClass:'toast-bottom-center',});
+            break;
+        case "error":
+            toastr.error("{{ message }}" , {newestOnTop:true, progressBar:true,positionClass:'toast-bottom-center',});
+            break;
+    }
+</script>
+{% endfor %}
+{% endif %}

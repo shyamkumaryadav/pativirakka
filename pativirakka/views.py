@@ -3,14 +3,16 @@ import re
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.generic.base import View
+from django.forms import modelformset_factory, formset_factory
 from django.views.generic import CreateView
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
 from django.http.response import Http404
+from django.contrib import messages
 from twilio.rest import Client
-from .models import PativirakkaFrom
+from .models import PativirakkaFrom, Person
 from django.db.models import F
 from twilio.twiml.messaging_response import (
     MessagingResponse,
@@ -21,12 +23,26 @@ from twilio.twiml.messaging_response import (
 )
 
 
+def manage_authors(request):
+    AuthorFormSet = formset_factory(Person, extra=3)
+    if request.method == "POST":
+        formset = AuthorFormSet(
+            request.POST, request.FILES
+        )
+        if formset.is_valid():
+            user = formset.save()
+            return HttpResponse("is Valid")
+    else:
+        formset = AuthorFormSet()
+    return render(request, 'form.html', {'form': formset})
+
+
 def Instagram_Image_Video_only_Public(url):
     try:
         x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
         if x:
-            request_image = requests.get(url)
-            src = request_image.content.decode('utf-8')
+            request_ = requests.get(url)
+            src = request_.content.decode('utf-8')
             check_type = re.search(
                 r'<meta name="medium" content=[\'"]?([^\'" >]+)', src)
             check_type_f = check_type.group()
@@ -61,28 +77,44 @@ def Instagram_Image_Video_only_Public(url):
 def home(request):
     context = {}
     if not request.user.is_authenticated:
-        form = AuthenticationForm(request.POST or None)
-        context['form'] = form
-    if request.POST:
-        if form.is_valid():
-            login(request, form.get_user())
+        form_signup = UserCreationForm(request.POST or None)
+        # form_login = AuthenticationForm(request.POST or None)
+        # context['form_login'] = form_login
+        context['form_signup'] = form_signup
+        if request.POST:
+            if form_signup.is_valid():
+                user = form_signup.save()
+                messages.success(
+                    request, 'The user "{}" was successfully created.'.format(user.username))
+                login(request, user)
+                messages.success(
+                    request, 'Welcome {} ji.'.format(user.username))
+                return HttpResponseRedirect(request.path)
     return render(request, "index.html", context)
 
 
 def logIn(request):
     if request.POST:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        if username is not None and password:
+        username = request.POST.get('username_login')
+        password = request.POST.get('password_login')
+        if username is not None and password is not None:
             user = authenticate(
                 request, username=username, password=password)
             if user is None:
                 return JsonResponse({'error': 'Please enter the correct username and password.'}, safe=False)
             else:
                 login(request, user)
+                messages.success(
+                    request, 'Welcome {} ji.'.format(user.username))
                 return HttpResponse('ok')
     else:
         raise Http404
+
+
+def logOut(request):
+    logout(request)
+    messages.success(request, 'Logout.')
+    return HttpResponseRedirect('/')
 
 
 class UserCreate(CreateView):
@@ -90,6 +122,7 @@ class UserCreate(CreateView):
     form_class = UserCreationForm
     model = get_user_model()
     success_url = '/'
+    extra_context = {'title': 'Sign Up'}
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:

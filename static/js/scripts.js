@@ -33,23 +33,34 @@
 
     // Form Login
     const form = $("#loginForm");
+    const btn = $("#loginFormBtn");
     var time = 0;
-    form.on('submit', (event) => {
+    btn.on('click', (event) => {
         event.preventDefault();
         time += 1;
         $.ajax({
             type: "POST",
             url: "login/",
+            context: document.body,
             data: form.serialize(),
             success: (data) => {
-                form[0].reset();
                 if (data.error) {
-                    $('#errorusername').text(data.error);
+                    toastr.error(data.error);
+                    $("#password_login").val("");
                 }
                 else if (data === 'ok') {
-                    location.reload();
+                    document.location.reload();
+                }
+            },
+            statusCode: {
+                404: () => {
+                    toastr.error('error 404');
+                },
+                500: () => {
+                    toastr.error('error 500');
                 }
             }
+
         });
     });
 

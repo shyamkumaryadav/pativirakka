@@ -1,26 +1,6 @@
+{% extends 'bash.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Resume - Start Bootstrap Theme</title>
-        <link rel="icon" type="image/x-icon" href={% static "assets/img/favicon.ico" %} />
-        <!-- Font Awesome icons (free version)-->
-        <!-- <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script> -->
-        <script src='{% static "fontawesome/all.js" %}'></script>
-        <!-- Google fonts-->
-        <!-- <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" /> -->
-        <link href="{% static 'googlefont/saira.css' %}" rel="stylesheet" type="text/css" />
-        <!-- <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" /> -->
-        <link href="{% static 'googlefont/muli.css' %}" rel="stylesheet" type="text/css" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href={% static "css/styles.css" %} rel="stylesheet" />
-    </head>
-    <body id="page-top">
-        <!-- Navigation-->
+{% block main %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
             <a class="navbar-brand js-scroll-trigger" href="#page-top">
                 <span class="d-block d-lg-none">Clarence Taylor</span>
@@ -33,29 +13,29 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if user.is_authenticated %}welcome {{ user.username }}{% else %}Account{% endif %}</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             {% if user.is_authenticated %}
-                            <a class="dropdown-item" href="#" >{{ user.username }}</a>
+                            <a class="dropdown-item" href="#about" >{{ user.username }}</a>
+                            <a class="dropdown-item" href="#" >Create</a>
                             <a class="dropdown-item" href="{% url 'logout' %}" >Logout</a>
                             {% else %}
                             <form class="px-4 py-3" method="POST" id="loginForm">
                                 {% csrf_token %}
                                 <div class="form-group">
-                                  <label for="username">Username</label>
-                                  <input type="text" class="form-control" id="username" name="{{ form.username.name }}" placeholder="Username" required>
+                                  <label for="username_login">Username</label>
+                                  <input type="text" class="form-control" id="username_login" name="username_login" placeholder="Username" required>
                                   <small id="errorusername" class="form-text text-danger">
-                                    
                                   </small>
                                 </div>
                                 <div class="form-group">
-                                  <label for="password">Password</label>
-                                  <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                                  <label for="password_login">Password</label>
+                                  <input type="password" class="form-control" id="password_login" name="password_login" placeholder="Password" required>
                                   <small id="passwordHelpBlock" class="form-text text-muted">
                                     <a class="" href="javascript:">Forgot password?</a>
                                   </small>
                                 </div>
-                                <input type="submit" value="Sign in" class="btn btn-primary">
+                                <button id="loginFormBtn" class="btn btn-primary">Sign in</button>
                             </form>
                               <div class="dropdown-divider"></div>
-                              <a class="dropdown-item" href="{% url 'signup' %}" >New around here? Sign up</a>
+                              <a class="dropdown-item" href="#signup" >New around here? Sign up</a>
                             {% endif %}  
                         </div>
                       </li>
@@ -250,16 +230,26 @@
                     </ul>
                 </div>
             </section>
+            {% if user.is_authenticated is not True %}
+            <!-- Sign Up -->
+                <section class="resume-section" id="signup">
+                    <div class="resume-section-content">
+                        <h1 class="mb-0">
+                            Sign
+                            <span class="text-primary">Up</span>
+                        </h1>
+                        <form action="" method="post">
+                        {% load crispy_forms_tags %}
+                        {% csrf_token %}
+                        {{ form_signup|crispy }}
+                        <div class="text-center"><button type="submit" class="btn btn-primary btn-lg">Sign up</button></div>
+                    </form>
+                    </div>
+                </section>
+                <hr class="m-0" />
+                {% endif %}
         </div>
-        <!-- Bootstrap core JS-->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
-        <script src={% static "js/jquery.min.js" %}></script>
-        <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script> -->
-        <script src={% static "js/bootstrap.bundle.min.js" %}></script>
-        <!-- Third party plugin JS-->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script> -->
-        <script src={% static "js/jquery.easing.min.js" %}></script>
-        <!-- Core theme JS-->
-        <script src={% static "js/scripts.js" %}></script>
-    </body>
-</html>
+{% endblock main %}
+{% block script %}
+{% include 'message.html' %}
+{% endblock script %}
