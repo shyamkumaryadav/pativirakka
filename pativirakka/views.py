@@ -5,14 +5,14 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.generic.base import View
 from django.forms import modelformset_factory, formset_factory
 from django.views.generic import CreateView
-from django.contrib.auth import login, logout, authenticate, get_user_model
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, logout, authenticate
+from .forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
 from django.http.response import Http404
 from django.contrib import messages
 from twilio.rest import Client
-from .models import PativirakkaFrom, Person, Experience
+from .models import PativirakkaFrom, User, Experience
 from django.db.models import F
 from twilio.twiml.messaging_response import (
     MessagingResponse,
@@ -27,10 +27,10 @@ def manage_authors(request):
     AuthorFormSet = modelformset_factory(
         Experience, exclude=('user',), extra=1)
     formset = AuthorFormSet(request.POST or None,
-                            queryset=Experience.objects.filter(user=Person.objects.get(user=request.user)))
+                            queryset=Experience.objects.filter(user=User.objects.get(user=request.user)))
     if request.method == "POST":
         if formset.is_valid():
-            user = formset.save()
+            # user = formset.save()
             return HttpResponse("is Valid")
     return render(request, 'form.html', {'forms': formset})
 
@@ -118,7 +118,7 @@ def logOut(request):
 class UserCreate(CreateView):
     template_name = 'form.html'
     form_class = UserCreationForm
-    model = get_user_model()
+    model = User
     success_url = '/'
     extra_context = {'title': 'Sign Up'}
 

@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 from django.template.defaultfilters import filesizeformat, truncatechars_html
 from django.core.exceptions import ValidationError
 from django.core import validators
-User = get_user_model()
+from django.contrib.auth.models import AbstractUser
+
 
 SIZE_OK = 1024 * 1024 * 0.75
 
@@ -30,6 +31,7 @@ SOCIAL_TAGS = [
     ('<i class="fab fa-linkedin-in"></i>', 'LinkedIN'),
     ('<i class="fab fa-npm"></i>', 'NPM'),
     ('<i class="fab fa-patreon"></i>', 'Patreon'),
+    ('<i class="fab fa-python"></i>', 'Python'),
     ('<i class="fab fa-telegram"></i>', 'Telegram'),
     ('<i class="fab fa-twitch"></i>', 'Twitch'),
     ('<i class="fab fa-twitter"></i>', 'Twitter'),
@@ -38,7 +40,7 @@ SOCIAL_TAGS = [
 
 
 def upload_to(instance, filename):
-    return f"{instance.user.first_name}-{instance.user.last_name}-{secrets.token_hex()}.{filename.split('.')[-1]}"
+    return f"{instance.first_name}-{instance.last_name}-{secrets.token_hex()}.{filename.split('.')[-1]}"
 
 
 def SizeOk(value):
@@ -47,31 +49,29 @@ def SizeOk(value):
             f"Your Image size is {filesizeformat(value.size)} > {filesizeformat(SIZE_OK)}")
 
 
-class Person(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, unique=True,)
-    address = models.TextField(max_length=150)
-    about = RichTextField()
+class User(AbstractUser):
+    address = models.TextField(max_length=150, null=True, blank=True)
+    about = RichTextField(null=True, blank=True)
     profile = models.FileField(upload_to=upload_to, default='default.png', blank=True, null=True, help_text=f'Size <b>{filesizeformat(SIZE_OK)}</b> or less.[500 x 500]',
                                validators=[validators.FileExtensionValidator(allowed_extensions=validators.get_available_image_extensions(), message="'%(extension)s' not valid Profile Image."), SizeOk])
 
     def __str__(self):
-        return self.user.__str__()
+        return self.username
 
     def image_tag(self):
         from django.utils.html import mark_safe, escape
         return mark_safe('<img src="{}" width="200px" />'.format(escape(self.profile.url)))
-    image_tag.short_description = 'Image'
+    image_tag.short_description = 'Profile'
     image_tag.allow_tags = True
 
 
 class Experience(models.Model):
-    user = models.ForeignKey(Person, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=225)
     company = models.CharField(max_length=225)
     start_date = models.DateField()
     end_date = models.DateField(
-        blank=True)
+        blank=True, null=True)
     present = models.BooleanField(
         default=False, help_text="For Present Date check this Field.")
     description = RichTextField()
@@ -81,24 +81,27 @@ class Experience(models.Model):
 
 
 class Education(models.Model):
-    user = models.ForeignKey(Person, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     institute = models.CharField(max_length=225)
     gpa = models.DecimalField(max_digits=4, decimal_places=2)
     branche = models.CharField(max_length=225, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(
-        blank=True,)
+        blank=True, null=True)
     present = models.BooleanField(
         default=False, help_text="For Present Date check this Field.")
+
+    class Meta(AbstractUser.Meta):
+        swappable = 'AUTH_USER_MODEL'
 
     def __str__(self):
         return self.institute
 
 
 class Skill(models.Model):
-    user = models.ForeignKey(Person, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     language = models.CharField(max_length=225)
-    logo = models.CharField(max_length=100,
+    logo = models.CharField(max_length=100, blank=True, choices=SOCIAL_TAGS,
                             help_text="Find Logo on <a href='#' onclick=\"var tag_id=this.parentNode.parentNode.getElementsByTagName('input')[0].id.split('-').slice(0, -1);tag_id.push('language');this.href = 'https://fontawesome.com/icons?d=gallery&q='+document.getElementById(tag_id.join('-')).value+'&s=brands&m=free';\" target=\"_blank\">Font Awesome</a><b> Ex.: python '&lt;i class=&#x27;fab fa-python&#x27;&gt;&lt;/i&gt;'</b>")
     level = models.CharField(
         max_length=2,
@@ -115,7 +118,7 @@ class Skill(models.Model):
 
 
 class SocialLink(models.Model):
-    user = models.ForeignKey(Person, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=100, null=True)
     logo = models.CharField(max_length=100, choices=SOCIAL_TAGS)
     url = models.URLField()
@@ -125,7 +128,7 @@ class SocialLink(models.Model):
 
 
 class AddMore(models.Model):
-    user = models.ForeignKey(Person, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=225)
     description = RichTextField()
 
@@ -134,7 +137,7 @@ class AddMore(models.Model):
 
 
 class AwardCertification(models.Model):
-    user = models.ForeignKey(Person, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=110)
 
     def __str__(self):

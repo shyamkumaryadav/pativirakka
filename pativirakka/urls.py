@@ -8,18 +8,14 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from .views import home, Pativirakka, logIn, UserCreate, manage_authors, logOut
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('test/', manage_authors),
     path('login/', logIn, name='login'),
     path('logout/', logOut, name='logout'),
     path('pativirakka/', Pativirakka, name="pativirakka"),
-    path('favicon.ico',
-         RedirectView.as_view(url=staticfiles_storage.url('assets/img/favicon.ico')))
+    # path('favicon.ico',
+    #      RedirectView.as_view(url=staticfiles_storage.url('assets/img/favicon.ico'))),
+    path('admin/', admin.site.urls),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL,
-                          document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

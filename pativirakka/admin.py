@@ -1,11 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from .models import Experience, Skill, Person, Education, SocialLink, AddMore, AwardCertification, PativirakkaFrom
+from django.contrib.auth.admin import UserAdmin, Group
+from .models import Experience, Skill, User, Education, SocialLink, AddMore, AwardCertification, PativirakkaFrom
 
 admin.site.site_header = "Pativirakka Admin"
 admin.site.site_title = "Pativirakka Site Admin"
 admin.site.index_title = "Site Pativirakka"
-User = get_user_model()
+
+admin.site.unregister(Group)
 
 
 @admin.register(PativirakkaFrom)
@@ -15,14 +16,14 @@ class AdminPativirakkaFrom(admin.ModelAdmin):
 
 class TabEducation(admin.StackedInline):
     model = Education
-    extra = 1
-    min = 1
+    extra = 0
+    classes = ('collapse',)
 
 
 class TabSkills(admin.StackedInline):
     model = Skill
-    extra = 1
-    num = 1
+    extra = 0
+    classes = ('collapse',)
 
 
 class TabExperience(admin.StackedInline):
@@ -49,13 +50,27 @@ class TabAdd_more(admin.StackedInline):
     classes = ('collapse',)
 
 
-@admin.register(Person)
-class PersonAdmins(admin.ModelAdmin):
+@admin.register(User)
+class UserAdmins(UserAdmin):
     inlines = [TabEducation, TabSkills,
                TabExperience, TabSocial_links, TabAwardCertification, TabAdd_more]
     readonly_fields = ('image_tag',)
     fieldsets = (
+        (None, {'fields': ('image_tag', 'username', 'email', 'password', 'profile')}),
+        ('Personal info', {
+            'classes': ('collapse',),
+            'fields': ('first_name', 'last_name', 'address', 'about')}),
+        ('Permissions', {
+            'classes': ('collapse',),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        ('Important dates', {
+            'classes': ('collapse',),
+            'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
         (None, {
-            'fields': ('image_tag', 'user', 'address', 'about', 'profile')
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'password1', 'password2', 'profile',),
         }),
     )
