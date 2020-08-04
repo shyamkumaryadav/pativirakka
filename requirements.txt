@@ -1,3 +1,4 @@
+reportlab
 requests==2.24.0
 twilio==6.44.1
 whitenoise==5.1.0

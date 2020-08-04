@@ -91,9 +91,6 @@ class Education(models.Model):
     present = models.BooleanField(
         default=False, help_text="For Present Date check this Field.")
 
-    class Meta(AbstractUser.Meta):
-        swappable = 'AUTH_USER_MODEL'
-
     def __str__(self):
         return self.institute
 

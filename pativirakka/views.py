@@ -22,17 +22,30 @@ from twilio.twiml.messaging_response import (
     Media,
 )
 
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+
 
 def manage_authors(request):
-    AuthorFormSet = modelformset_factory(
-        Experience, exclude=('user',), extra=1)
-    formset = AuthorFormSet(request.POST or None,
-                            queryset=Experience.objects.filter(user=User.objects.get(user=request.user)))
-    if request.method == "POST":
-        if formset.is_valid():
-            # user = formset.save()
-            return HttpResponse("is Valid")
-    return render(request, 'form.html', {'forms': formset})
+    # Create a file-like buffer to receive PDF data.
+    buffer = io.BytesIO()
+
+    # Create the PDF object, using the buffer as its "file."
+    p = canvas.Canvas(buffer)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    p.drawString(100, 100, "example.html")
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+
+    # FileResponse sets the Content-Disposition header so that browsers
+    # present the option to save the file.
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='hello.pdf')
 
 
 def Instagram_Image_Video_only_Public(url):
@@ -76,8 +89,6 @@ def home(request):
     context = {}
     if not request.user.is_authenticated:
         form_signup = UserCreationForm(request.POST or None)
-        # form_login = AuthenticationForm(request.POST or None)
-        # context['form_login'] = form_login
         context['form_signup'] = form_signup
         if request.POST:
             if form_signup.is_valid():
