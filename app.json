@@ -1,0 +1,27 @@
+{
+    "name": "Start on Heroku: Python",
+    "description": "This is Website who generate a Resume Base On your Information and let you convert into PDF also you can share your resume PDF download link which is expired in 1 Month. Admin will not send Your Data to any Other people or group.",
+    "image": "heroku/python",
+    "repository": "https://github.com/shyamkumaryadav/pativirakka",
+    "keywords": [
+        "python",
+        "django"
+    ],
+    "addons": [
+        "heroku-postgresql"
+    ],
+    "env": {
+        "SECRET_KEY": {
+            "description": "The secret key for the Django application.",
+            "generator": "secret"
+        }
+    },
+    "environments": {
+        "test": {
+            "scripts": {
+                "test-setup": "python manage.py collectstatic --noinput",
+                "test": "python manage.py test"
+            }
+        }
+    }
+}
