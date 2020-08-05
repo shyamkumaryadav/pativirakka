@@ -3,15 +3,15 @@ import re
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.generic.base import View
-from django.forms import modelformset_factory, formset_factory
+from django.forms import modelformset_factory, formset_factory, inlineformset_factory
 from django.views.generic import CreateView
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
 from django.http.response import Http404
 from django.contrib import messages
 from twilio.rest import Client
+from .forms import UserCreationForm, ExpUser
 from .models import PativirakkaFrom, User, Experience
 from django.db.models import F
 from twilio.twiml.messaging_response import (
@@ -27,27 +27,103 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 
 
-def manage_authors(request):
-    # Create a file-like buffer to receive PDF data.
-    buffer = io.BytesIO()
-
-    # Create the PDF object, using the buffer as its "file."
-    p = canvas.Canvas(buffer)
-
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, "example.html")
-
-    # Close the PDF object cleanly, and we're done.
-    p.showPage()
-    p.save()
-
-    # FileResponse sets the Content-Disposition header so that browsers
-    # present the option to save the file.
-    buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename='hello.pdf')
+def test(request):
+    context = {}
+    UserExp = inlineformset_factory(
+        User, Experience, form=ExpUser, extra=1)
+    if request.method == "POST":
+        form = UserExp(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(request.path)
+        else:
+            context['formset'] = form
+    else:
+        form = UserExp(instance=request.user)
+        context['formset'] = form
+    return render(request, 'form.html', context)
 
 
+def home(request):
+    context = {}
+    if not request.user.is_authenticated:
+        form_signup = UserCreationForm(request.POST or None)
+        context['form_signup'] = form_signup
+        if request.POST:
+            if form_signup.is_valid():
+                user = form_signup.save()
+                login(request, user)
+                messages.success(
+                    request, 'Welcome {} ji.'.format(user.username))
+                return HttpResponseRedirect(request.path)
+    return render(request, "index.html", context)
+
+
+def logIn(request):
+    if request.POST:
+        username = request.POST.get('username_login')
+        password = request.POST.get('password_login')
+        if username is not None and password is not None:
+            user = authenticate(
+                request, username=username, password=password)
+            if user is None:
+                return JsonResponse({'error': 'Please enter the correct username and password.'}, safe=False)
+            else:
+                login(request, user)
+                messages.success(
+                    request, 'Welcome {} ji.'.format(user.username))
+                return HttpResponse('ok')
+    else:
+        raise Http404
+
+
+def logOut(request):
+    logout(request)
+    messages.success(request, 'Logout.')
+    return HttpResponseRedirect('/')
+
+
+class UserCreate(CreateView):
+    template_name = 'form.html'
+    model = User
+    fields = ('username', 'email', 'password', 'profile')
+    success_url = '/'
+    extra_context = {'title': 'User test'}
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        raise Http404
+
+    def post(self, request, *args, **kwargs):
+        if request.user:
+            return super().post(request, *args, **kwargs)
+        raise Http404
+
+    def get_context_data(self, **kwargs):
+        # we need to overwrite get_context_data
+        # to make sure that our formset is rendered
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data["children"] = ChildFormset(self.request.POST)
+        else:
+            data["children"] = ChildFormset()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        children = context["children"]
+        self.object = form.save()
+        if children.is_valid():
+            children.instance = self.object
+            children.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("parents:list")
+
+
+# hope and hope
 def Instagram_Image_Video_only_Public(url):
     try:
         x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
@@ -83,66 +159,6 @@ def Instagram_Image_Video_only_Public(url):
     except Exception as e:
         print(e)
         pass
-
-
-def home(request):
-    context = {}
-    if not request.user.is_authenticated:
-        form_signup = UserCreationForm(request.POST or None)
-        context['form_signup'] = form_signup
-        if request.POST:
-            if form_signup.is_valid():
-                user = form_signup.save()
-                messages.success(
-                    request, 'The user "{}" was successfully created.'.format(user.username))
-                login(request, user)
-                messages.success(
-                    request, 'Welcome {} ji.'.format(user.username))
-                return HttpResponseRedirect(request.path)
-    return render(request, "index.html", context)
-
-
-def logIn(request):
-    if request.POST:
-        username = request.POST.get('username_login')
-        password = request.POST.get('password_login')
-        if username is not None and password is not None:
-            user = authenticate(
-                request, username=username, password=password)
-            if user is None:
-                return JsonResponse({'error': 'Please enter the correct username and password.'}, safe=False)
-            else:
-                login(request, user)
-                messages.success(
-                    request, 'Welcome {} ji.'.format(user.username))
-                return HttpResponse('ok')
-    else:
-        raise Http404
-
-
-def logOut(request):
-    logout(request)
-    messages.success(request, 'Logout.')
-    return HttpResponseRedirect('/')
-
-
-class UserCreate(CreateView):
-    template_name = 'form.html'
-    form_class = UserCreationForm
-    model = User
-    success_url = '/'
-    extra_context = {'title': 'Sign Up'}
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            raise Http404
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        print(request.POST)
-        if request.user:
-            return super().post(request, *args, **kwargs)
-        raise Http404
 
 
 @csrf_exempt

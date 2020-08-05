@@ -1,6 +1,6 @@
 {% extends 'bash.html' %}
 {% block main %}
-  <div class="container">
+  {% comment %} <div class="container">
     <div class="row py-2">
        <div class="col-md-6 mx-auto">
           <div class="card">
@@ -16,24 +16,17 @@
               </div>
            </div>
                 <div class="row">
-                   <div class="col">
-                    <form method="POST" class="">
-                      {% csrf_token %}
+                   <div class="col"> {% endcomment %}
                       {% load crispy_forms_tags %}
-                      {{ forms.as_p }}
-                      <div class="row text-center">
-                        <div class="col">
-                          <br>
-                          <button type="submit" class="btn btn-outline-primary btn-block">Submit</button>
-                        </div>
-                     </div>
-                    </form>
-                   </div>
+                      {% for form in formset %}
+                           {% crispy form %}
+                        {% endfor %}
+                   {% comment %} </div>
                 </div>
              </div>
           </div>
        </div>
     </div>
- </div>
+ </div> {% endcomment %}
 
 {% endblock main %}

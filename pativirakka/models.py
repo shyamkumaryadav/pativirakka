@@ -21,6 +21,11 @@ SKILL_LEVEL = [
     ("a", "Advanced"),
 ]
 
+LANGUAGE_TAGS = [
+    (None, "Language tags"),
+    ('<i class="fab fa-python"></i>', 'Python')
+]
+
 SOCIAL_TAGS = [
     (None, "Social Tages"),
     ('<i class="fab fa-docker"></i>', 'Docker'),
@@ -74,7 +79,7 @@ class Experience(models.Model):
         blank=True, null=True)
     present = models.BooleanField(
         default=False, help_text="For Present Date check this Field.")
-    description = RichTextField()
+    description = RichTextField(config_name="my-custom-toolbar")
 
     def __str__(self):
         return self.title

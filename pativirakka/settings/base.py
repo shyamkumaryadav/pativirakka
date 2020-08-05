@@ -1,3 +1,4 @@
+from ckeditor.configs import DEFAULT_CONFIG
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(
@@ -118,3 +119,39 @@ LOGOUT_REDIRECT_URL = 'home'
 
 
 AUTH_USER_MODEL = 'pativirakka.User'
+
+
+CUSTOM_TOOLBAR = [
+    {
+        "name": "document",
+        "items": [
+            "Styles", "Format", "Maximize", "Preview", "Blockquote", "Bold", "Italic", "Underline", "Strike", " -",
+            "TextColor", "BGColor",  "-",
+            "JustifyLeft", "JustifyCenter", "JustifyRight", "JustifyBlock",
+        ],
+    },
+    {
+        "name": "widgets",
+                "items": [
+                    "Undo", "Redo", "-",
+                    "NumberedList", "BulletedList", "-",
+                    "Outdent", "Indent", "-",
+                    "Link", "Unlink", "-",
+                    "Image", "CodeSnippet", "Table", "HorizontalRule", "SpecialChar", "-",
+                ],
+    },
+]
+
+CKEDITOR_CONFIGS = {
+    "default": DEFAULT_CONFIG,
+    "my-custom-toolbar": {
+        "skin": "moono-lisa",
+        "toolbar": CUSTOM_TOOLBAR,
+        'height': "auto",
+        'width': "auto",
+        "toolbarGroups": None,
+        "extraPlugins": ",".join(["image2", "codesnippet", "preview"]),
+        "removePlugins": ",".join(["image", "smiley"]),
+        "codeSnippet_theme": "xcode",
+    },
+}
