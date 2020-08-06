@@ -54,9 +54,9 @@ class TabAdd_more(admin.StackedInline):
 class UserAdmins(UserAdmin):
     inlines = [TabEducation, TabSkills,
                TabExperience, TabSocial_links, TabAwardCertification, TabAdd_more]
-    readonly_fields = ('image_tag',)
+    readonly_fields = ('image_tag','id')
     fieldsets = (
-        (None, {'fields': ('image_tag', 'username', 'email', 'password', 'profile')}),
+        (None, {'fields': ('id', 'image_tag', 'username', 'email', 'password', 'profile')}),
         ('Personal info', {
             'classes': ('collapse',),
             'fields': ('first_name', 'last_name', 'address', 'about')}),

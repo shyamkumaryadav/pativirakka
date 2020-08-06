@@ -1,32 +1,43 @@
 {% extends 'bash.html' %}
 {% block main %}
-  {% comment %} <div class="container">
-    <div class="row py-2">
-       <div class="col-md-6 mx-auto">
-          <div class="card">
-             <div class="card-body">
-              <div class="row">
-                <div class="col">
-                   <h1 class="text-center">{{ title }}</h1>
-                </div>
-             </div>
-             <div class="row">
-              <div class="col">
-                 <hr>
-              </div>
-           </div>
-                <div class="row">
-                   <div class="col"> {% endcomment %}
-                      {% load crispy_forms_tags %}
-                      {% for form in formset %}
-                           {% crispy form %}
-                        {% endfor %}
-                   {% comment %} </div>
-                </div>
-             </div>
-          </div>
+{% comment %} <div class="container">
+  <div class="row py-2">
+   <div class="col-md-6 mx-auto">
+    <div class="card">
+     <div class="card-body">
+      <div class="row">
+        <div class="col">
+         <h1 class="text-center">{{ title }}</h1>
        </div>
-    </div>
- </div> {% endcomment %}
+     </div>
+     <div class="row">
+      <div class="col">
+       <hr>
+     </div>
+   </div>
+   <div class="row">
+     <div class="col"> {% endcomment %}
+       <form method="post">
+        {% load crispy_forms_tags %}
+        {% csrf_token %}
+        <!-- this is crispy form start -->
+          {% for form in formset %}
+          {% if forloop.first %}<h1>Add Expres</h1>{% endif %}
+          {% comment %}form count {{ forloop.count }}{% endcomment %}
+          <h4>Exp {{ form.id.value }} <br>{{ forloop.counter }}</h4>
+          {% crispy form %}
+          {% endfor %}
+          {{ formset.management_form }}
+          <!-- this is end of crispy form -->
+        <input type="submit" class="btn btn-primary btn-lg btn-blck" name="Submit">
+        <!-- this is btn -->
+      <!-- </form> -->
+    {% comment %} </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div> {% endcomment %}
 
 {% endblock main %}
