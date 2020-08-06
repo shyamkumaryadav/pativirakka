@@ -30,16 +30,17 @@ from reportlab.pdfgen import canvas
 def test(request):
     context = {}
     UserExp = inlineformset_factory(
-        User, Experience, form=ExpUser, extra=1, can_order=True)
+        User, Experience, form=ExpUser, extra=3)
     if request.method == "POST":
-        form = UserExp(request.POST, request.FILES, instance=request.user, prefix='article')
+        form = UserExp(request.POST, request.FILES,
+                       instance=request.user, prefix='article')
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(request.path)
         else:
             context['formset'] = form
     else:
-        form = UserExp(instance=request.user, prefix='article')
+        form = UserExp(prefix='article', instance=request.user)
         context['formset'] = form
     return render(request, 'form.html', context)
 

@@ -18,9 +18,9 @@
    <div class="row">
      <div class="col"> {% endcomment %}
        <form method="post">
-        {% load crispy_forms_tags %}
         {% csrf_token %}
         <!-- this is crispy form start -->
+        {% load crispy_forms_tags %}
           {% for form in formset %}
           {% if forloop.first %}<h1>Add Expres</h1>{% endif %}
           {% comment %}form count {{ forloop.count }}{% endcomment %}

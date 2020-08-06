@@ -4,6 +4,7 @@ from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.template.defaultfilters import filesizeformat, truncatechars_html
 from django.core.exceptions import ValidationError
+from django.utils.html import mark_safe, escape
 from django.core import validators
 from django.contrib.auth.models import AbstractUser
 
@@ -57,6 +58,9 @@ def SizeOk(value):
 class User(AbstractUser):
     address = models.TextField(max_length=150, null=True, blank=True)
     about = RichTextField(null=True, blank=True)
+    email = models.EmailField(verbose_name='email address')
+    is_email = models.BooleanField(verbose_name="Email verification",
+                                   help_text='Designates whether this user email should be treated as active.', default=False)
     profile = models.FileField(upload_to=upload_to, default='default.png', blank=True, null=True, help_text=f'Size <b>{filesizeformat(SIZE_OK)}</b> or less.[500 x 500]',
                                validators=[validators.FileExtensionValidator(allowed_extensions=validators.get_available_image_extensions(), message="'%(extension)s' not valid Profile Image."), SizeOk])
 
@@ -64,7 +68,6 @@ class User(AbstractUser):
         return self.username
 
     def image_tag(self):
-        from django.utils.html import mark_safe, escape
         return mark_safe('<img src="{}" width="200px" />'.format(escape(self.profile.url)))
     image_tag.short_description = 'Profile'
     image_tag.allow_tags = True
@@ -76,9 +79,7 @@ class Experience(models.Model):
     company = models.CharField(max_length=225)
     start_date = models.DateField()
     end_date = models.DateField(
-        blank=True, null=True)
-    present = models.BooleanField(
-        default=False, help_text="For Present Date check this Field.")
+        blank=True, null=True, help_text="For Present Date blank this Field.")
     description = RichTextField(config_name="my-custom-toolbar")
 
     def __str__(self):
@@ -92,9 +93,7 @@ class Education(models.Model):
     branche = models.CharField(max_length=225, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(
-        blank=True, null=True)
-    present = models.BooleanField(
-        default=False, help_text="For Present Date check this Field.")
+        blank=True, null=True, help_text="For Present Date <a href='javascript:void(0);' onclick=\"var tag_id=this.parentNode.parentNode.getElementsByTagName('input')[0].id.split('-').slice(0, -1);tag_id.push('end_date');document.getElementById(tag_id.join('-')).value = '';\"><u>Blank</u></a> this Field.")
 
     def __str__(self):
         return self.institute

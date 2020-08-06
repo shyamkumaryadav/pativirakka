@@ -14,18 +14,17 @@ class DateInput(forms.DateInput):
 class UserCreationForm(UCF):
     class Meta(UCF.Meta):
         model = User
+        fields = ('username', 'email', 'password1', 'password2')
 
 
 class ExpUser(forms.ModelForm):
     class Meta:
         model = Experience
-        # fields = ("title", "company", "start_date",
-        #           "end_date", "present", "description")
         exclude = ('user',)
         widgets = {
             'start_date': DateInput(),
             'end_date': DateInput(),
-            # 'description': CKEditorWidget()
+            # 'description': CKEditorWidget(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -36,20 +35,9 @@ class ExpUser(forms.ModelForm):
         self.helper.render_hidden_fields = True
         self.helper.render_required_fields = True
         self.helper.render_unmentioned_fields = True
-    #     self.layout = Layout(
-    #         # Row(HTML(
-    #         #     "{% if forloop.first %}Message displayed only in the first form of a formset forms list{% endif %}"),
-    #         #     Fieldset("Total Experience {{ forloop.counter }}",
-    #                      Row(Field('title')),
-    #                      Row(Field('company')),
-    #                      Row(Field('description')),
-    #                      Row(Field('start_date')),
-    #                      Row(Field('end_date')),
-    #                      Row(Field('present'))
-
-    #         # HTML("{% if forloop.last %}<input type='submit' name='Done'>{% endif %}")
-    #     )
-    #     # self.render_required_fields = True
-    #     # self.helper.form_id = 'ExpChangeForm'
-    #     # self.helper.form_method = 'post'
-    #     # self.render_required_fields = True
+        self.helper.layout = Layout(
+            Row(Column('title'), Column('company')),
+            Row(Column('start_date'), Column(
+                PrependedText('end_date', '<button type="button" class="close" aria-label="Close" onclick="window.tag_id=this.parentNode.parentNode.parentNode.getElementsByTagName(\'input\')[0].id.split(\'-\').slice(0, -1);window.tag_id.push(\'end_date\');document.getElementById(tag_id.join(\'-\')).value = \'\';"><span aria-hidden="true">&times;</span></button>', active=True))),
+            Row('description')
+        )
