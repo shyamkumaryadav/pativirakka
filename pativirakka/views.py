@@ -143,34 +143,33 @@ Find me on 🔥:\n
 Twitter: @shyamkumaryada\n
 Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
         if pati.is_limit:
-            try:
-                urls = re.findall("(?P<url>https?://[^\s]+)", msg)
-                print(urls)
-                for url in urls:
-                    print(url) # Hope this work
-                    x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
-                    print(x)
-                    if x:
-                        req = requests.get(url=url)
-                        data=bs.BeautifulSoup(req.content, 'html.parser')
-                        type_ = data.find('meta', {'name':'medium'})['content']
-                        print(type_)
-                        message.media(url=data.find('head').find(property=f"og:{type_}")['content'])
-                        if type_ == 'image':
-                            try:
-                                raw = data.find_all('script')[3].contents[0].replace('window._sharedData =', '').replace(';', '')
-                                print(raw)
-                                json_data = json.loads(raw)
-                                print(json_data)
-                                message.body(json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
-                            except Exception as e:
-                                print(type_, e)
-                        print('Media * '*6)
-                        PativirakkaFrom.objects.filter(
-                            contect=phone).update(limit=F('limit') + 1)
-            except Exception as e:
-                message.media(url="https://cdn.icon-icons.com/icons2/1483/PNG/512/404browser_102160.png")
-                print(e)
+            urls = re.findall("(?P<url>https?://[^\s]+)", msg)
+            print(urls)
+            for url in urls:
+                print(url) # Hope this work
+                x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
+                print(x)
+                if x:
+                    req = requests.get(url=url)
+                    data=bs.BeautifulSoup(req.content, 'html.parser')
+                    type_ = data.find('meta', {'name':'medium'})['content']
+                    print(type_)
+                    message.media(url=data.find('head').find(property=f"og:{type_}")['content'])
+                    if type_ == 'image':
+                        try:
+                            raw = data.find_all('script')[3].contents[0].replace('window._sharedData =', '').replace(';', '')
+                            print(raw)
+                            json_data = json.loads(raw)
+                            print(json_data)
+                            message.body(json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
+                        except Exception as e:
+                            print(type_, e)
+                    print('Media * '*6)
+                    PativirakkaFrom.objects.filter(
+                        contect=phone).update(limit=F('limit') + 1)
+            # except Exception as e:
+            #     message.media(url="https://cdn.icon-icons.com/icons2/1483/PNG/512/404browser_102160.png")
+            #     print(e)
         else:
             message.body('You complete your Trial. Please contact to admin@shyamkumaryadav using mention link on message 🌄')
         response.append(message)
