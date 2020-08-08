@@ -152,7 +152,7 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                 if x:
                     from faker import Faker
                     fake = Faker()
-                    req = requests.get(url=url, headers = {"User-Agent": fake.user_agent()})
+                    req = requests.get(url=url, headers={'User-Agent': fake.user_agent(), 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'})
                     print(req)
                     data=bs.BeautifulSoup(req.content, 'html.parser')
                     print(data)
