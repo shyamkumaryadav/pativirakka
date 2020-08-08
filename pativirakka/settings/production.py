@@ -4,7 +4,7 @@ import django_heroku
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = False
+DEBUG = os.getenv("DEBUG")
 
 LOGGING = {
     'version': 1,
