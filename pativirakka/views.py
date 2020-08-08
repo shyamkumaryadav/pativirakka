@@ -163,14 +163,14 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                                 json_data = json.loads(raw)
                                 print(json_data)
                                 message.body(json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
-                            except:
-                                pass
+                            except Exception as e:
+                                print(type_, e)
                         print('Media * '*6)
                         PativirakkaFrom.objects.filter(
                             contect=phone).update(limit=F('limit') + 1)
-            except:
+            except Exception as e:
                 message.media(url="https://cdn.icon-icons.com/icons2/1483/PNG/512/404browser_102160.png")
-                print('Not url * ' * 6)
+                print(e)
         else:
             message.body('You complete your Trial. Please contact to admin@shyamkumaryadav using mention link on message 🌄')
         response.append(message)
