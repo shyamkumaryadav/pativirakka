@@ -150,7 +150,9 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                 x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
                 print(x)
                 if x:
-                    req = requests.get(url=url)
+                    from faker import Faker
+                    fake = Faker()
+                    req = requests.get(url=url, headers = {"User-Agent": fake.user_agent()})
                     print(req)
                     data=bs.BeautifulSoup(req.content, 'html.parser')
                     print(data)

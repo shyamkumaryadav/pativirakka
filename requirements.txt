@@ -1,4 +1,5 @@
 bs4
+faker
 reportlab
 requests==2.24.0
 twilio==6.44.1
