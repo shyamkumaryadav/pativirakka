@@ -146,12 +146,18 @@ class AwardCertification(models.Model):
 
 
 class PativirakkaFrom(models.Model):
+    from_user = models.CharField(max_length=16, blank=True, null=True)
     contect = models.CharField(max_length=220)
     limit = models.IntegerField(default=1)
     limit_number = models.IntegerField(default=10)
 
+
     def __str__(self):
-        return self.contect
+        return self.from_user or '-'
+
+    def save(self, *args, **kwargs):
+        self.from_user = self.contect.split(':')[-1]
+        super().save(*args, **kwargs)
 
     def _is_limit(self):
         return self.limit <= self.limit_number

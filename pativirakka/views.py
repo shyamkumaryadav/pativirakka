@@ -147,13 +147,14 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                 urls = re.findall("(?P<url>https?://[^\s]+)", msg)
                 print(urls)
                 for url in urls:
-                    print(url) # Hope this work
+                    # print(url) # Hope this work
                     x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
                     print(x)
                     if x:
                         from faker import Faker
                         fake = Faker()
-                        req = requests.get(params={'__a' : 1 } ,url=url, headers={'User-Agent': fake.user_agent()})
+                        req = requests.get(url=url)
+                        print(req.cookies.get('urlgen'))
                         data=bs.BeautifulSoup(req.content, 'html.parser')
                         print(data.find('title').text)
                         type_ = data.find('meta', {'name':'medium'})['content']
@@ -162,17 +163,18 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                         if type_ == 'image':
                             try:
                                 raw = data.find_all('script')[3].contents[0].replace('window._sharedData =', '').replace(';', '')
-                                print(raw)
+                                # print(raw)
                                 json_data = json.loads(raw)
-                                print(json_data)
+                                # print(json_data)
                                 message.body(json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
                             except Exception as e:
-                                print(type_, e)
+                                print("*"*19)
+                                print(e)
                         print('Media * '*6)
                         PativirakkaFrom.objects.filter(
                             contect=phone).update(limit=F('limit') + 1)
             except Exception as e:
-                message.body('404 : Please contact to admin@shyamkumaryadav using mention link on message\n404 Error: '+e + '\n\n🌄')
+                message.body('404 : Please contact to admin@shyamkumaryadav using mention link on message\n404 Error: \n\n🌄')
                 print(e)
         else:
             message.body('You complete your Trial. Please contact to admin@shyamkumaryadav using mention link on message 🌄')

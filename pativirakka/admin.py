@@ -11,7 +11,8 @@ admin.site.unregister(Group)
 
 @admin.register(PativirakkaFrom)
 class AdminPativirakkaFrom(admin.ModelAdmin):
-    list_display = ('__str__', '_is_limit')
+    list_display = ('__str__', 'limit', '_is_limit')
+    readonly_fields = ('contect', 'from_user')
 
 
 class TabEducation(admin.StackedInline):
