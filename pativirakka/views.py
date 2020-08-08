@@ -143,37 +143,37 @@ Find me on 🔥:\n
 Twitter: @shyamkumaryada\n
 Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
         if pati.is_limit:
-            urls = re.findall("(?P<url>https?://[^\s]+)", msg)
-            print(urls)
-            for url in urls:
-                print(url) # Hope this work
-                x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
-                print(x)
-                if x:
-                    from faker import Faker
-                    fake = Faker()
-                    req = requests.get(url=url, headers={'User-Agent': fake.user_agent(), 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'})
-                    # print(req)
-                    data=bs.BeautifulSoup(req.content, 'html.parser')
-                    print(data.find('title').text)
-                    type_ = data.find('meta', {'name':'medium'})['content']
-                    print(type_)
-                    message.media(url=data.find('head').find(property=f"og:{type_}")['content'])
-                    if type_ == 'image':
-                        try:
-                            raw = data.find_all('script')[3].contents[0].replace('window._sharedData =', '').replace(';', '')
-                            print(raw)
-                            json_data = json.loads(raw)
-                            print(json_data)
-                            message.body(json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
-                        except Exception as e:
-                            print(type_, e)
-                    print('Media * '*6)
-                    PativirakkaFrom.objects.filter(
-                        contect=phone).update(limit=F('limit') + 1)
-            # except Exception as e:
-            #     message.media(url="https://cdn.icon-icons.com/icons2/1483/PNG/512/404browser_102160.png")
-            #     print(e)
+            try:
+                urls = re.findall("(?P<url>https?://[^\s]+)", msg)
+                print(urls)
+                for url in urls:
+                    print(url) # Hope this work
+                    x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
+                    print(x)
+                    if x:
+                        from faker import Faker
+                        fake = Faker()
+                        req = requests.get(url=url, headers={'User-Agent': fake.user_agent(), 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'})
+                        data=bs.BeautifulSoup(req.content, 'html.parser')
+                        print(data.find('title').text)
+                        type_ = data.find('meta', {'name':'medium'})['content']
+                        print(type_)
+                        message.media(url=data.find('head').find(property=f"og:{type_}")['content'])
+                        if type_ == 'image':
+                            try:
+                                raw = data.find_all('script')[3].contents[0].replace('window._sharedData =', '').replace(';', '')
+                                print(raw)
+                                json_data = json.loads(raw)
+                                print(json_data)
+                                message.body(json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
+                            except Exception as e:
+                                print(type_, e)
+                        print('Media * '*6)
+                        PativirakkaFrom.objects.filter(
+                            contect=phone).update(limit=F('limit') + 1)
+            except Exception as e:
+                message.body('404 : Please contact to admin@shyamkumaryadav using mention link on message\n404 Error: '+e + '\n\n🌄')
+                print(e)
         else:
             message.body('You complete your Trial. Please contact to admin@shyamkumaryadav using mention link on message 🌄')
         response.append(message)
