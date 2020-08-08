@@ -151,7 +151,9 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                 print(x)
                 if x:
                     req = requests.get(url=url)
+                    print(req)
                     data=bs.BeautifulSoup(req.content, 'html.parser')
+                    print(data)
                     type_ = data.find('meta', {'name':'medium'})['content']
                     print(type_)
                     message.media(url=data.find('head').find(property=f"og:{type_}")['content'])
