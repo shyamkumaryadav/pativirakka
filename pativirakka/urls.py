@@ -5,10 +5,11 @@ from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.views.generic.base import RedirectView, TemplateView
 from django.contrib.staticfiles.storage import staticfiles_storage
-from .views import home, Pativirakka, logIn, UserCreate, test, logOut
+from .views import home, Pativirakka, logIn, UserCreate, test, logOut, Home
 
 urlpatterns = [
     path('', home, name='home'),
+    path('api/', Home.as_view(), name='home'),
     path('example/', TemplateView.as_view(template_name="example.html"), name="example"),
     path('test/', test, name='add'),
     path('login/', logIn, name='login'),

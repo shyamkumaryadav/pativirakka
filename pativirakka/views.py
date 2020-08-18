@@ -9,6 +9,7 @@ from django.forms import modelformset_factory, formset_factory, inlineformset_fa
 from django.views.generic import CreateView
 from django.contrib.auth import login, logout, authenticate
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
 from django.http.response import Http404
 from django.contrib import messages
@@ -40,6 +41,49 @@ def test(request):
     return render(request, 'form.html', context)
 
 
+class Home(View):
+    # form_class = UserCreationForm
+    # authentication_form = None
+    # redirect_field_name = REDIRECT_FIELD_NAME
+    # template_name = 'index.html'
+    # redirect_authenticated_user = False
+    # extra_context = None
+    http_method_names = ['get', 'post', 'put',
+                         'patch', 'delete', 'head', 'options', 'trace']
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(Home, self).dispatch(request, *args, **kwargs)
+
+    def response_m(self, request, msg):
+        info = {"path": request.path,
+                "Method": f"{msg} or {request.method}",
+                "cookies": request.COOKIES
+                }
+        return JsonResponse(dict(info))
+
+    def get(self, request, *args, **kwargs):
+        return self.response_m(request, "get")
+
+    def post(self, request, *args, **kwargs):
+        return self.response_m(request, "post")
+
+    def head(self, request, *args, **kwargs):
+        return self.response_m(request, "head")
+
+    def options(self, request, *args, **kwargs):
+        return self.response_m(request, "options")
+
+    def delete(self, request, *args, **kwargs):
+        return self.response_m(request, "delete")
+
+    def put(self, request, *args, **kwargs):
+        return self.response_m(request, "put")
+
+    def patch(self, request, *args, **kwargs):
+        return self.response_m(request, "patch")
+
+
 def home(request):
     context = {}
     if not request.user.is_authenticated:
@@ -56,19 +100,20 @@ def home(request):
 
 
 def logIn(request):
-    if request.method == 'POST':
-        username = request.POST.get('username_login')
-        password = request.POST.get('password_login')
-        if username is not None and password is not None:
-            user = authenticate(
-                request, username=username, password=password)
-            if user is None:
-                return JsonResponse({'error': 'Please enter the correct username and password.'}, safe=False)
-            else:
-                login(request, user)
-                messages.success(
-                    request, 'Welcome {} ji.'.format(user.username))
-                return HttpResponse('ok')
+    if not request.user.is_authenticated:
+        if request.method == 'POST':
+            username = request.POST.get('username_login')
+            password = request.POST.get('password_login')
+            if username is not None and password is not None:
+                user = authenticate(
+                    request, username=username, password=password)
+                if user is None:
+                    return JsonResponse({'error': 'Please enter the correct username and password.'}, safe=False)
+                else:
+                    login(request, user)
+                    messages.success(
+                        request, 'Welcome {} ji.'.format(user.username))
+                    return HttpResponse('ok')
     else:
         raise Http404
 
@@ -119,7 +164,6 @@ class UserCreate(CreateView):
         return reverse("parents:list")
 
 
-
 @csrf_exempt
 def Pativirakka(request, *args, **kwargs):
     if request.method == 'POST':
@@ -129,7 +173,7 @@ def Pativirakka(request, *args, **kwargs):
         if created:
             pati.save()
         response = MessagingResponse()
-        message = Message(body = f"""
+        message = Message(body=f"""
 This bot is for *downloading Instagram public profile videos and images.* To download video 🎬 or Image 📸 just *share the public link of POST* with me I will send back your Image 📸 or Video 🎬.
 
 ~This also send a text which is inside a Image.~
@@ -148,25 +192,30 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                 print(urls)
                 for url in urls:
                     # print(url) # Hope this work
-                    x = re.match(r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
+                    x = re.match(
+                        r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
                     print(x)
                     if x:
                         from faker import Faker
                         fake = Faker()
-                        req = requests.get(url=url)
+                        req = requests.request("GET", url, headers={}, data={})
                         print(req.cookies.get('urlgen'))
-                        data=bs.BeautifulSoup(req.content, 'html.parser')
+                        data = bs.BeautifulSoup(req.content, 'html.parser')
                         print(data.find('title').text)
-                        type_ = data.find('meta', {'name':'medium'})['content']
+                        type_ = data.find('meta', {'name': 'medium'})[
+                            'content']
                         print(type_)
-                        message.media(url=data.find('head').find(property=f"og:{type_}")['content'])
+                        message.media(url=data.find('head').find(
+                            property=f"og:{type_}")['content'])
                         if type_ == 'image':
                             try:
-                                raw = data.find_all('script')[3].contents[0].replace('window._sharedData =', '').replace(';', '')
+                                raw = data.find_all('script')[3].contents[0].replace(
+                                    'window._sharedData =', '').replace(';', '')
                                 # print(raw)
                                 json_data = json.loads(raw)
                                 # print(json_data)
-                                message.body(json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
+                                message.body(
+                                    json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
                             except Exception as e:
                                 print("*"*19)
                                 print(e)
@@ -174,10 +223,12 @@ Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
                         PativirakkaFrom.objects.filter(
                             contect=phone).update(limit=F('limit') + 1)
             except Exception as e:
-                message.body('404 : Please contact to admin@shyamkumaryadav using mention link on message\n404 Error: \n\n🌄')
+                message.body(
+                    '404 : Please contact to admin@shyamkumaryadav using mention link on message\n404 Error: \n\n🌄')
                 print(e)
         else:
-            message.body('You complete your Trial. Please contact to admin@shyamkumaryadav using mention link on message 🌄')
+            message.body(
+                'You complete your Trial. Please contact to admin@shyamkumaryadav using mention link on message 🌄')
         response.append(message)
         return HttpResponse(str(response))
     raise Http404
