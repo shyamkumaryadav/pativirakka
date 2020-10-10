@@ -23,7 +23,7 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 
 
-def test(request):
+def test(request): # API :-)
     context = {}
     UserExp = inlineformset_factory(
         User, Experience, form=ExpUser, extra=3)
@@ -173,62 +173,67 @@ def Pativirakka(request, *args, **kwargs):
         if created:
             pati.save()
         response = MessagingResponse()
-        message = Message(body=f"""
+
+        if pati.is_limit:
+            try:
+                urls = re.findall("(?P<url>https?://[^\s]+)", msg)
+                print(len(urls))
+                if len(urls) != 0:
+                    for url in urls:
+                        # print(url) # Hope this work
+                        x = re.match(
+                            r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
+                        print(x)
+                        if x:
+                            from faker import Faker
+                            fake = Faker()
+                            req = requests.request(
+                                "GET", url, headers={}, data={})
+                            print(req.cookies.get('urlgen'))
+                            data = bs.BeautifulSoup(req.content, 'html.parser')
+                            print(data.find('title').text)
+                            type_ = data.find('meta', {'name': 'medium'})[
+                                'content']
+                            print(type_)
+                            messageBody = Message()
+                            messageBody.media(url=data.find('head').find(
+                                property=f"og:{type_}")['content'])
+                            if type_ == 'image':
+                                try:
+                                    raw = data.find_all('script')[3].contents[0].replace(
+                                        'window._sharedData =', '').replace(';', '')
+                                    # print(raw)
+                                    json_data = json.loads(raw)
+                                    # print(json_data)
+                                    messageBody.body(
+                                        json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
+                                except Exception as e:
+                                    print("*"*19)
+                                    print(e)
+                            print('Media * '*6)
+                            response.append(messageBody)
+                            PativirakkaFrom.objects.filter(
+                                contect=phone).update(limit=F('limit') + 1)
+                else:
+                    raise Exception
+            except Exception as e:
+                response.append(Message(body="""
 This bot is for *downloading Instagram public profile videos and images.* To download video 🎬 or Image 📸 just *share the public link of POST* with me I will send back your Image 📸 or Video 🎬.
 
 ~This also send a text which is inside a Image.~
 
-If You are getting 404. You provide a privet link or wrong link 🔔.
+_Please contact to shyamkumaryadav2003@gmail.com_
+{}
 
             *🧔 Thank You !!!*
 
 Find me on 🔥:\n
 ```Facebook & Instagram : @ishyamkumaryadav\n
 Twitter: @shyamkumaryada\n
-Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""")
-        if pati.is_limit:
-            try:
-                urls = re.findall("(?P<url>https?://[^\s]+)", msg)
-                print(urls)
-                for url in urls:
-                    # print(url) # Hope this work
-                    x = re.match(
-                        r'^(https:)[/][/]www.([^/]+[.])*instagram.com', url)
-                    print(x)
-                    if x:
-                        from faker import Faker
-                        fake = Faker()
-                        req = requests.request("GET", url, headers={}, data={})
-                        print(req.cookies.get('urlgen'))
-                        data = bs.BeautifulSoup(req.content, 'html.parser')
-                        print(data.find('title').text)
-                        type_ = data.find('meta', {'name': 'medium'})[
-                            'content']
-                        print(type_)
-                        message.media(url=data.find('head').find(
-                            property=f"og:{type_}")['content'])
-                        if type_ == 'image':
-                            try:
-                                raw = data.find_all('script')[3].contents[0].replace(
-                                    'window._sharedData =', '').replace(';', '')
-                                # print(raw)
-                                json_data = json.loads(raw)
-                                # print(json_data)
-                                message.body(
-                                    json_data['entry_data']['PostPage'][0]['graphql']['shortcode_media']['accessibility_caption'])
-                            except Exception as e:
-                                print("*"*19)
-                                print(e)
-                        print('Media * '*6)
-                        PativirakkaFrom.objects.filter(
-                            contect=phone).update(limit=F('limit') + 1)
-            except Exception as e:
-                message.body(
-                    '404 : Please contact to admin@shyamkumaryadav using mention link on message\n404 Error: \n\n🌄')
-                print(e)
+Reddit & GitHub 🌱 & telegram: @shyamkumaryadav```\n\n\n""".format("🔔🔔 *404 Error* 🔔🔔" if len(urls) != 0 else "@shyamkumaryadav")))
+                print("Error: ", e)
         else:
-            message.body(
-                'You complete your Trial. Please contact to admin@shyamkumaryadav using mention link on message 🌄')
-        response.append(message)
+            response.append(Message(
+                body='You complete your Trial. Please contact to shyamkumaryadav2003@gmail.com using EMAIL 🌄'))
         return HttpResponse(str(response))
     raise Http404

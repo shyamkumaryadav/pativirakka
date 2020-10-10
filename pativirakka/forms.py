@@ -11,7 +11,8 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 
-class UserCreationForm(UCF):
+class UserCreationForm(UC
+    F):
     class Meta(UCF.Meta):
         model = User
         fields = ('username', 'email', 'password1', 'password2')
